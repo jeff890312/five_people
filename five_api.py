@@ -195,8 +195,11 @@ def process_location_data(location):
     
     result = final(store_count_re, count_region_type_max_re)
 
-    result_dict = {"result": result}
-    return result_dict
+    result_dict = {"location":result}
+
+    result_string = json.dumps(result_dict)
+
+    return result_string
     #json_result = jsonify(result_dict)
     
     #return json_result
@@ -211,16 +214,16 @@ def get_books():
 
     return jsonify(status)
 
-@app.route('/your_location', methods=['POST'])
+@app.route('/your_location', methods=['GET'])
 def process_input():
     
-    #location = request.args.get('location')
-   location = request.form.get('location')
+    location = request.args.get('data')
+    #location = request.form.get('location')
    #print("接收到的地址：", location)
-   result = process_location_data(location)
-   print(result)
+    result = process_location_data(location)
+    print(result)
    # return result
-   return redirect(url_for('show_result', result=result))
+    return redirect(url_for('show_result', result=result))
    #return redirect(url_for('show_result'))
 
 @app.route('/location', methods=['GET'])
@@ -230,8 +233,9 @@ def open_location_html():
 @app.route('/result', methods=['GET'])
 def show_result():
     result = request.args.get('result')
-    return render_template('result.html', result=result)
+    #return render_template('result.html', result=result)
     #return render_template('result.html')
+    return result
 
 if __name__ == '__main__':
     app.run()
