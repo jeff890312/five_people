@@ -158,11 +158,13 @@ def count_region_type_max(region_percent,typeListString): #根據行政區比例
 
     return type_max
 
-def final(store_count_re, count_region_type_max_re):
+def final_cal(store_count_re, count_region_type_max_re):
     final_re = []
     for i in range(5):
         final_re.append([store_count_re[i][0],int(count_region_type_max_re[i][1]-store_count_re[i][1])])
-    return final_re
+    # 依照數字大小做排序
+    final_re_sorted = sorted(final_re, key=lambda x: x[1], reverse=True)
+    return final_re_sorted
 
 
 def process_location_data(location):
@@ -193,13 +195,13 @@ def process_location_data(location):
     # print("每個類型加總各區域後數量上限" , count_region_type_max_re)
     # print("每個類型建議數量" , final(store_count_re,count_region_type_max_re))
     
-    result = final(store_count_re, count_region_type_max_re)
+    result_cal = final_cal(store_count_re, count_region_type_max_re)
 
-    result_dict = {"location":result}
+    result_dict = {'location':result_cal}
 
-    result_string = json.dumps(result_dict)
+    # result_string = json.dumps(result_dict)
 
-    return result_string
+    return result_dict
     #json_result = jsonify(result_dict)
     
     #return json_result
@@ -221,9 +223,23 @@ def process_input():
     #location = request.form.get('location')
    #print("接收到的地址：", location)
     result = process_location_data(location)
-    print(result)
-   # return result
-    return redirect(url_for('show_result', result=result))
+
+    #print("result" , type(result))
+    #print("result" , result)
+
+    data = result["location"]
+    
+    response =""
+    for i in range(5):
+        response += str(i+1) + "."+ data[i][0]+ " "
+
+    print(response)
+
+    result_dict = {'location':response}
+
+    return jsonify(result_dict)
+
+    # return redirect(url_for('show_result', result=result))
    #return redirect(url_for('show_result'))
 
 @app.route('/location', methods=['GET'])
@@ -239,5 +255,4 @@ def show_result():
 
 if __name__ == '__main__':
     app.run()
-
 
